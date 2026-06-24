@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useActivities } from '../hooks/useWebSocket';
 import { AgentList } from '../components/AgentList';
 import { ActivityFeed } from '../components/ActivityFeed';
@@ -10,6 +10,7 @@ export function Dashboard() {
   const { activities, connected } = useActivities();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [filter, setFilter] = useState<string | null>(null);
+  const [session, setSession] = useState<string>('all');
 
   useEffect(() => {
     api.getAgents().then(setAgents).catch(() => {});
@@ -23,7 +24,15 @@ export function Dashboard() {
     }
   }, [activities, agents]);
 
-  const visible = filter ? activities.filter((a) => a.agent_name === filter) : activities;
+  const sessions = useMemo(
+    () => Array.from(new Set(activities.map((a) => a.session_id))),
+    [activities],
+  );
+
+  const visible = activities.filter(
+    (a) =>
+      (!filter || a.agent_name === filter) && (session === 'all' || a.session_id === session),
+  );
 
   return (
     <div className={styles.dashboard}>
@@ -36,9 +45,23 @@ export function Dashboard() {
       <section className={styles.feedPane}>
         <div className={styles.feedHeader}>
           <span className={styles.feedTitle}>Activity Feed</span>
-          <span className={connected ? styles.live : styles.offline}>
-            {connected ? '⬤ Live' : '○ Offline'}
-          </span>
+          <div className={styles.headerRight}>
+            <select
+              className={styles.sessionSelect}
+              value={session}
+              onChange={(e) => setSession(e.target.value)}
+            >
+              <option value="all">All sessions</option>
+              {sessions.map((s) => (
+                <option key={s} value={s}>
+                  {s.length > 12 ? `${s.slice(0, 12)}…` : s}
+                </option>
+              ))}
+            </select>
+            <span className={connected ? styles.live : styles.offline}>
+              {connected ? '⬤ Live' : '○ Offline'}
+            </span>
+          </div>
         </div>
         <ActivityFeed activities={visible} />
       </section>

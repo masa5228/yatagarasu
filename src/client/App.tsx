@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Dashboard } from './pages/Dashboard';
 import { Agents } from './pages/Agents';
+import { Setup } from './pages/Setup';
 import styles from './App.module.css';
 
-type View = 'dashboard' | 'agents';
+type View = 'dashboard' | 'agents' | 'setup';
 
 export function App() {
   const [view, setView] = useState<View>('dashboard');
@@ -25,10 +26,18 @@ export function App() {
           >
             Agents
           </button>
+          <button
+            className={view === 'setup' ? styles.activeTab : styles.tab}
+            onClick={() => setView('setup')}
+          >
+            Setup
+          </button>
         </nav>
       </header>
       <main className={styles.main}>
-        {view === 'dashboard' ? <Dashboard /> : <Agents />}
+        {view === 'dashboard' && <Dashboard />}
+        {view === 'agents' && <Agents />}
+        {view === 'setup' && <Setup />}
       </main>
     </div>
   );

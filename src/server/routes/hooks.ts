@@ -8,7 +8,8 @@ export const hooksRouter = Router();
 hooksRouter.post('/', (req, res) => {
   const body = req.body ?? {};
 
-  const agentName: string = body.agent_type ?? body.agent_name ?? 'default';
+  const queryAgent = typeof req.query.agent === 'string' ? req.query.agent : undefined;
+  const agentName: string = queryAgent ?? body.agent_type ?? body.agent_name ?? 'default';
   const sessionId: string = body.session_id ?? 'unknown';
   const toolName: string = body.tool_name ?? 'unknown';
   const hookEvent: string = body.hook_event_name ?? body.hook_event ?? 'unknown';

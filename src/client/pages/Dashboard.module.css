@@ -25,6 +25,23 @@
   color: var(--muted);
 }
 
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.sessionSelect {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-family: var(--sans);
+  cursor: pointer;
+}
+
 .live {
   color: var(--accent);
   font-size: 12px;

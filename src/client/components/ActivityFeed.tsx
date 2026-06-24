@@ -1,5 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Activity } from '../types';
+import { ActivityDetail } from './ActivityDetail';
 import styles from './ActivityFeed.module.css';
 
 interface Props {
@@ -29,6 +30,7 @@ function summarize(input: string | null): string {
 
 export function ActivityFeed({ activities }: Props) {
   const bottomRef = useRef<HTMLDivElement>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -37,14 +39,24 @@ export function ActivityFeed({ activities }: Props) {
   return (
     <div className={styles.feed}>
       {activities.length === 0 && <div className={styles.empty}>Waiting for activity…</div>}
-      {activities.map((activity) => (
-        <div key={activity.id} className={styles.row}>
-          <span className={styles.time}>{formatTime(activity.timestamp)}</span>
-          <span className={styles.agent}>{activity.agent_name}</span>
-          <span className={styles.tool}>{activity.tool_name}</span>
-          <span className={styles.summary}>{summarize(activity.tool_input)}</span>
-        </div>
-      ))}
+      {activities.map((activity) => {
+        const expanded = expandedId === activity.id;
+        return (
+          <div key={activity.id} className={styles.rowWrap}>
+            <div
+              className={`${styles.row} ${expanded ? styles.rowActive : ''}`}
+              onClick={() => setExpandedId(expanded ? null : activity.id)}
+            >
+              <span className={styles.caret}>{expanded ? '▾' : '▸'}</span>
+              <span className={styles.time}>{formatTime(activity.timestamp)}</span>
+              <span className={styles.agent}>{activity.agent_name}</span>
+              <span className={styles.tool}>{activity.tool_name}</span>
+              <span className={styles.summary}>{summarize(activity.tool_input)}</span>
+            </div>
+            {expanded && <ActivityDetail activity={activity} />}
+          </div>
+        );
+      })}
       <div ref={bottomRef} />
     </div>
   );

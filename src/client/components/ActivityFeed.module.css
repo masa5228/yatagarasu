@@ -9,12 +9,34 @@
   gap: 2px;
 }
 
+.rowWrap {
+  display: flex;
+  flex-direction: column;
+}
+
 .row {
   display: flex;
   gap: 12px;
   align-items: baseline;
-  padding: 3px 0;
+  padding: 3px 6px;
   white-space: nowrap;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.rowActive {
+  background: rgba(0, 255, 157, 0.08);
+}
+
+.caret {
+  color: var(--muted);
+  font-size: 9px;
+  width: 10px;
+  flex-shrink: 0;
 }
 
 .time {
