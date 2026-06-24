@@ -1,5 +1,7 @@
 node_modules/
 dist/
+coverage/
 *.sqlite
 *.sqlite-*
 .DS_Store
+.playwright-mcp/
