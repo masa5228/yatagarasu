@@ -9,6 +9,9 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "concurrently -k -n server,client \"tsx watch src/server/dev.ts\" \"vite\"",
     "build": "npm run build:server && npm run build:client",
