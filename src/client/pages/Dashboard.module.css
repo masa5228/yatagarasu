@@ -1,0 +1,36 @@
+.dashboard {
+  display: flex;
+  height: 100%;
+}
+
+.feedPane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.feedHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.feedTitle {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.live {
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.offline {
+  color: var(--inactive);
+  font-size: 12px;
+}
