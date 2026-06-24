@@ -3,6 +3,24 @@
   "version": "0.1.0",
   "description": "Local dev dashboard to monitor Claude Code agents in real time",
   "license": "MIT",
+  "author": "masa5228",
+  "keywords": [
+    "claude-code",
+    "claude",
+    "dashboard",
+    "agents",
+    "monitoring",
+    "hooks",
+    "cli"
+  ],
+  "homepage": "https://github.com/masa5228/yatagarasu#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masa5228/yatagarasu.git"
+  },
+  "bugs": {
+    "url": "https://github.com/masa5228/yatagarasu/issues"
+  },
   "bin": {
     "yata": "./dist/bin/yata.js"
   },
