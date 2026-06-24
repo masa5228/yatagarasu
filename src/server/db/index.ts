@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import { randomUUID } from 'crypto';
 import { homedir } from 'os';
-import { join } from 'path';
+import { dirname, join } from 'path';
 import { mkdirSync } from 'fs';
 import { schema } from './schema';
 
@@ -32,10 +32,12 @@ export interface AgentInput {
   color?: string | null;
 }
 
-const dataDir = join(homedir(), '.yatagarasu');
-mkdirSync(dataDir, { recursive: true });
+const dbPath = process.env.YATA_DB_PATH ?? join(homedir(), '.yatagarasu', 'yatagarasu.sqlite');
+if (dbPath !== ':memory:') {
+  mkdirSync(dirname(dbPath), { recursive: true });
+}
 
-const db = new Database(join(dataDir, 'yatagarasu.sqlite'));
+const db = new Database(dbPath);
 db.pragma('journal_mode = WAL');
 db.exec(schema);
 
@@ -115,4 +117,8 @@ export function updateAgent(id: string, input: AgentInput): Agent | undefined {
 
 export function deleteAgent(id: string): boolean {
   return statements.deleteAgent.run(id).changes > 0;
+}
+
+export function _resetForTests(): void {
+  db.exec('DELETE FROM activities; DELETE FROM agents;');
 }

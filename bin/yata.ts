@@ -24,7 +24,7 @@ async function main(): Promise<void> {
 
   switch (command) {
     case 'start': {
-      const actualPort = await startServer({ port });
+      const { port: actualPort } = await startServer({ port });
       console.log(`◈ Yatagarasu running at http://localhost:${actualPort}`);
       break;
     }

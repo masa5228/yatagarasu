@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { buildHookConfig } from '../lib/hookSnippet';
 import styles from './Setup.module.css';
 
 export function Setup() {
@@ -6,17 +7,7 @@ export function Setup() {
   const [port, setPort] = useState('3847');
   const [copied, setCopied] = useState(false);
 
-  const snippet = useMemo(() => {
-    const query = agentName.trim() ? `?agent=${encodeURIComponent(agentName.trim())}` : '';
-    const command = `curl -s -X POST "http://localhost:${port}/api/hook${query}" -H "Content-Type: application/json" -d @-`;
-    const config = {
-      hooks: {
-        PreToolUse: [{ matcher: '.*', hooks: [{ type: 'command', command }] }],
-        PostToolUse: [{ matcher: '.*', hooks: [{ type: 'command', command }] }],
-      },
-    };
-    return JSON.stringify(config, null, 2);
-  }, [agentName, port]);
+  const snippet = useMemo(() => buildHookConfig(agentName, port), [agentName, port]);
 
   async function copy() {
     try {

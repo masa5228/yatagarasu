@@ -1,5 +1,5 @@
 import express from 'express';
-import { createServer } from 'http';
+import { createServer, type Server } from 'http';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { hooksRouter } from './routes/hooks';
@@ -13,8 +13,12 @@ export interface StartOptions {
   port?: number;
 }
 
-export function startServer(options: StartOptions = {}): Promise<number> {
-  const port = options.port ?? DEFAULT_PORT;
+export interface RunningServer {
+  server: Server;
+  port: number;
+}
+
+export function createApp(): express.Express {
   const app = express();
 
   app.use(express.json({ limit: '5mb' }));
@@ -31,10 +35,19 @@ export function startServer(options: StartOptions = {}): Promise<number> {
     });
   }
 
-  const server = createServer(app);
+  return app;
+}
+
+export function startServer(options: StartOptions = {}): Promise<RunningServer> {
+  const requested = options.port ?? DEFAULT_PORT;
+  const server = createServer(createApp());
   attachWebSocket(server);
 
   return new Promise((resolve) => {
-    server.listen(port, () => resolve(port));
+    server.listen(requested, () => {
+      const address = server.address();
+      const port = typeof address === 'object' && address ? address.port : requested;
+      resolve({ server, port });
+    });
   });
 }
