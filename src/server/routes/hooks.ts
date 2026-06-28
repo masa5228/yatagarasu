@@ -5,11 +5,27 @@ import { broadcastActivity } from '../ws';
 
 export const hooksRouter = Router();
 
+function normalizeName(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim().length > 0 ? value : undefined;
+}
+
+export function resolveAgentName(
+  query: { agent?: unknown; fallback?: unknown },
+  body: { agent_type?: unknown; agent_name?: unknown },
+): string {
+  return (
+    normalizeName(query.agent) ??
+    normalizeName(body.agent_type) ??
+    normalizeName(body.agent_name) ??
+    normalizeName(query.fallback) ??
+    'default'
+  );
+}
+
 hooksRouter.post('/', (req, res) => {
   const body = req.body ?? {};
 
-  const queryAgent = typeof req.query.agent === 'string' ? req.query.agent : undefined;
-  const agentName: string = queryAgent ?? body.agent_type ?? body.agent_name ?? 'default';
+  const agentName = resolveAgentName(req.query, body);
   const sessionId: string = body.session_id ?? 'unknown';
   const toolName: string = body.tool_name ?? 'unknown';
   const hookEvent: string = body.hook_event_name ?? body.hook_event ?? 'unknown';

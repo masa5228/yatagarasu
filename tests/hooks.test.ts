@@ -60,4 +60,35 @@ describe('POST /api/hook', () => {
     expect(acts[0].tool_input).toBeNull();
     expect(acts[0].tool_result).toBeNull();
   });
+
+  it('uses ?fallback= to identify a lead session with no body name', async () => {
+    await request(app)
+      .post('/api/hook?fallback=concierge')
+      .send({ session_id: 's', tool_name: 'Bash' })
+      .expect(200);
+
+    const acts = await activities();
+    expect(acts[0].agent_name).toBe('concierge');
+    expect(getAgents().map((a) => a.name)).toContain('concierge');
+  });
+
+  it('keeps a subagent agent_type over ?fallback=', async () => {
+    await request(app)
+      .post('/api/hook?fallback=concierge')
+      .send({ session_id: 's', tool_name: 'Bash', agent_type: 'researcher' })
+      .expect(200);
+
+    const acts = await activities();
+    expect(acts[0].agent_name).toBe('researcher');
+  });
+
+  it('prefers ?agent= over ?fallback= and body.agent_type', async () => {
+    await request(app)
+      .post('/api/hook?agent=forced&fallback=concierge')
+      .send({ session_id: 's', tool_name: 'Bash', agent_type: 'researcher' })
+      .expect(200);
+
+    const acts = await activities();
+    expect(acts[0].agent_name).toBe('forced');
+  });
 });
