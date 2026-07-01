@@ -28,7 +28,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "dev": "concurrently -k -n server,client \"tsx watch src/server/dev.ts\" \"vite\"",
@@ -43,7 +43,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "better-sqlite3": "^11.8.1",
+    "better-sqlite3": "^12.11.1",
     "express": "^4.21.2",
     "ws": "^8.18.0"
   },
