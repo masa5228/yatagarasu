@@ -39,7 +39,7 @@
 }
 
 .selected {
-  background: rgba(0, 255, 157, 0.1);
+  background: var(--accent-selected);
 }
 
 .status {
@@ -48,7 +48,7 @@
 }
 
 .active {
-  color: var(--accent);
+  color: var(--ok);
 }
 
 .inactive {

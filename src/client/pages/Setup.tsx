@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { buildHookConfig } from '../lib/hookSnippet';
+import { ThemePicker } from '../components/ThemePicker';
 import styles from './Setup.module.css';
 
 export function Setup() {
@@ -70,6 +71,8 @@ export function Setup() {
           ダッシュボード上で別エージェントとして表示されます。
         </p>
       </div>
+
+      <ThemePicker />
     </div>
   );
 }

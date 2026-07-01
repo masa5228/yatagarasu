@@ -12,7 +12,7 @@ export function App() {
   return (
     <div className={styles.app}>
       <header className={styles.header}>
-        <div className={styles.brand}>◈ Yatagarasu</div>
+        <div className={`${styles.brand} brand-glyph`}>◈ Yatagarasu</div>
         <nav className={styles.nav}>
           <button
             className={view === 'dashboard' ? styles.activeTab : styles.tab}

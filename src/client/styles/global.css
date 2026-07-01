@@ -2,12 +2,28 @@
   --bg: #0d0d0d;
   --panel: #141414;
   --border: #262626;
-  --accent: #00ff9d;
+  --accent: #a06cff;
+  --accent-selected: color-mix(in srgb, var(--accent) 10%, transparent);
+  --accent-row: color-mix(in srgb, var(--accent) 8%, transparent);
+  --ok: #3fb950;
+  --warn: #e3b341;
+  --err: #f85149;
   --inactive: #666666;
   --text: #e5e5e5;
   --muted: #888888;
   --mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+:root[data-theme='oil'] {
+  --accent-gradient: linear-gradient(110deg, #5b8cff 0%, #9d6bff 34%, #22d3c5 64%, #e45ccb 100%);
+}
+
+:root[data-theme='oil'] .brand-glyph {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 * {

@@ -43,7 +43,7 @@
 }
 
 .live {
-  color: var(--accent);
+  color: var(--ok);
   font-size: 12px;
 }
 

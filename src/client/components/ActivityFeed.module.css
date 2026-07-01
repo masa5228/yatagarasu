@@ -29,7 +29,7 @@
 }
 
 .rowActive {
-  background: rgba(0, 255, 157, 0.08);
+  background: var(--accent-row);
 }
 
 .caret {
