@@ -1,0 +1,110 @@
+.bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+}
+
+.stale {
+  opacity: 0.55;
+}
+
+.provider {
+  font-family: var(--sans);
+  font-weight: 600;
+  color: var(--text);
+  min-width: 130px;
+  flex-shrink: 0;
+}
+
+.plan {
+  color: var(--muted);
+  font-weight: 400;
+  text-transform: capitalize;
+}
+
+.windows {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.window {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.windowLabel {
+  color: var(--muted);
+  min-width: 30px;
+}
+
+.track {
+  display: inline-block;
+  width: 120px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  min-width: 2px;
+}
+
+.fillOk {
+  background: var(--ok);
+}
+
+.fillWarn {
+  background: var(--warn);
+}
+
+.fillErr {
+  background: var(--err);
+}
+
+.percent {
+  color: var(--text);
+  min-width: 34px;
+  text-align: right;
+}
+
+.reset {
+  color: var(--muted);
+  min-width: 56px;
+}
+
+.pill {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--warn);
+  border: 1px solid var(--warn);
+  border-radius: 10px;
+  padding: 1px 8px;
+  cursor: help;
+}
+
+.staleTag {
+  font-family: var(--sans);
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}

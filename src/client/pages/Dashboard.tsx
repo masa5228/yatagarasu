@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useActivities } from '../hooks/useWebSocket';
 import { AgentList } from '../components/AgentList';
 import { ActivityFeed } from '../components/ActivityFeed';
+import { UsageBar } from '../components/UsageBar';
 import { api } from '../lib/api';
 import { buildAgentColorMap } from '../lib/agentColors';
 import type { Agent } from '../types';
@@ -38,15 +39,17 @@ export function Dashboard() {
   );
 
   return (
-    <div className={styles.dashboard}>
-      <AgentList
-        agents={agents}
-        activities={activities}
-        selected={filter}
-        colorMap={colorMap}
-        onSelect={(name) => setFilter((current) => (current === name ? null : name))}
-      />
-      <section className={styles.feedPane}>
+    <div className={styles.page}>
+      <UsageBar />
+      <div className={styles.dashboard}>
+        <AgentList
+          agents={agents}
+          activities={activities}
+          selected={filter}
+          colorMap={colorMap}
+          onSelect={(name) => setFilter((current) => (current === name ? null : name))}
+        />
+        <section className={styles.feedPane}>
         <div className={styles.feedHeader}>
           <span className={styles.feedTitle}>Activity Feed</span>
           <div className={styles.headerRight}>
@@ -67,8 +70,9 @@ export function Dashboard() {
             </span>
           </div>
         </div>
-        <ActivityFeed activities={visible} colorMap={colorMap} />
-      </section>
+          <ActivityFeed activities={visible} colorMap={colorMap} />
+        </section>
+      </div>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { api } from '../lib/api';
 import { agentColorStyle, buildAgentColorMap } from '../lib/agentColors';
 import { formatDuration } from '../lib/summarize';
+import { CostPanel } from '../components/CostPanel';
 import type { Agent, AgentStats } from '../types';
 import styles from './Stats.module.css';
 
@@ -112,7 +113,12 @@ export function Stats() {
   }
 
   if (sorted.length === 0) {
-    return <div className={styles.page}><p className={styles.empty}>No activity recorded yet</p></div>;
+    return (
+      <div className={styles.page}>
+        <p className={styles.empty}>No activity recorded yet</p>
+        <CostPanel />
+      </div>
+    );
   }
 
   return (
@@ -151,6 +157,7 @@ export function Stats() {
           </section>
         ))}
       </div>
+      <CostPanel />
     </div>
   );
 }

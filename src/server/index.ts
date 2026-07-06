@@ -6,8 +6,11 @@ import { hooksRouter } from './routes/hooks';
 import { agentsRouter } from './routes/agents';
 import { activitiesRouter } from './routes/activities';
 import { statsRouter } from './routes/stats';
+import { usageRouter } from './routes/usage';
+import { costRouter } from './routes/cost';
 import { attachWebSocket } from './ws';
 import { purgeActivitiesBefore } from './db';
+import { startUsagePolling } from './usage';
 
 const DEFAULT_PORT = 3847;
 const DEFAULT_RETENTION_DAYS = 30;
@@ -31,6 +34,8 @@ export function createApp(): express.Express {
   app.use('/api/agents', agentsRouter);
   app.use('/api/activities', activitiesRouter);
   app.use('/api/stats', statsRouter);
+  app.use('/api/usage', usageRouter);
+  app.use('/api/cost', costRouter);
 
   const clientDir = join(__dirname, '..', '..', 'client');
   if (existsSync(join(clientDir, 'index.html'))) {
@@ -59,6 +64,7 @@ export function startServer(options: StartOptions = {}): Promise<RunningServer> 
 
   const server = createServer(createApp());
   attachWebSocket(server);
+  startUsagePolling();
 
   return new Promise((resolve) => {
     server.listen(requested, () => {
