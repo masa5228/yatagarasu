@@ -59,11 +59,55 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  flex: 1;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
 }
 
 .name {
   font-size: 13px;
-  color: var(--text);
+  color: var(--agent-color, var(--text));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.errorBadge {
+  color: var(--err);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.runningBadge {
+  color: var(--warn);
+  font-size: 11px;
+  flex-shrink: 0;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.task {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 
 .role {

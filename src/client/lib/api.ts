@@ -1,4 +1,4 @@
-import type { Agent, Activity } from '../types';
+import type { Agent, Activity, AgentStats } from '../types';
 
 export interface AgentInput {
   name: string;
@@ -29,4 +29,5 @@ export const api = {
   deleteAgent: (id: string) =>
     request<void>(`/api/agents/${id}`, { method: 'DELETE' }),
   getActivities: () => request<Activity[]>('/api/activities'),
+  getStats: () => request<{ agents: AgentStats[] }>('/api/stats'),
 };

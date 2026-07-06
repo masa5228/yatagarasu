@@ -1,3 +1,11 @@
+.feedWrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
 .feed {
   flex: 1;
   overflow-y: auto;
@@ -45,7 +53,7 @@
 }
 
 .agent {
-  color: var(--accent);
+  color: var(--agent-color, var(--accent));
   min-width: 96px;
   flex-shrink: 0;
 }
@@ -60,6 +68,55 @@
   color: var(--muted);
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.status {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 11px;
+}
+
+.running {
+  color: var(--warn);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.duration {
+  color: var(--muted);
+}
+
+.error {
+  color: var(--err);
+}
+
+.rowError {
+  background: color-mix(in srgb, var(--err) 7%, transparent);
+  box-shadow: inset 2px 0 0 var(--err);
+}
+
+.newPill {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: #0d0d0d;
+  border: none;
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 
 .empty {

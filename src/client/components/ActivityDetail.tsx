@@ -1,3 +1,4 @@
+import { formatDuration } from '../lib/summarize';
 import type { Activity } from '../types';
 import styles from './ActivityDetail.module.css';
 
@@ -33,6 +34,10 @@ export function ActivityDetail({ activity }: Props) {
       <div className={styles.metaRow}>
         <span>session: {activity.session_id}</span>
         <span>event: {activity.hook_event}</span>
+        <span>
+          status: {activity.status}
+          {activity.duration_ms != null ? ` (${formatDuration(activity.duration_ms)})` : ''}
+        </span>
       </div>
     </div>
   );

@@ -1,7 +1,14 @@
 import { Router } from 'express';
 import { randomUUID } from 'crypto';
-import { ensureAgent, insertActivity, type Activity } from '../db';
-import { broadcastActivity } from '../ws';
+import {
+  ensureAgent,
+  insertActivity,
+  findRunningActivity,
+  completeActivity,
+  type Activity,
+  type ActivityStatus,
+} from '../db';
+import { broadcastActivity, broadcastActivityUpdate } from '../ws';
 
 export const hooksRouter = Router();
 
@@ -22,6 +29,16 @@ export function resolveAgentName(
   );
 }
 
+export function detectToolError(result: unknown): boolean {
+  if (result == null || typeof result !== 'object') return false;
+  const r = result as Record<string, unknown>;
+  if (r.is_error === true || r.isError === true) return true;
+  if (r.success === false) return true;
+  if (typeof r.error === 'string' && r.error.trim().length > 0) return true;
+  if (r.error != null && typeof r.error === 'object') return true;
+  return false;
+}
+
 hooksRouter.post('/', (req, res) => {
   const body = req.body ?? {};
 
@@ -32,8 +49,37 @@ hooksRouter.post('/', (req, res) => {
   const toolInput = body.tool_input !== undefined ? JSON.stringify(body.tool_input) : null;
   const rawResult = body.tool_response ?? body.tool_result;
   const toolResult = rawResult !== undefined ? JSON.stringify(rawResult) : null;
+  const toolUseId = normalizeName(body.tool_use_id) ?? null;
+  const nowMs = Date.now();
 
   ensureAgent(agentName);
+
+  if (hookEvent === 'PostToolUse') {
+    const running = findRunningActivity({
+      tool_use_id: toolUseId,
+      agent_name: agentName,
+      session_id: sessionId,
+      tool_name: toolName,
+    });
+    if (running) {
+      const updated = completeActivity(running.id, {
+        tool_result: toolResult,
+        status: detectToolError(rawResult) ? 'error' : 'completed',
+        duration_ms: running.timestamp_ms == null ? null : nowMs - running.timestamp_ms,
+        hook_event: hookEvent,
+      });
+      if (updated) broadcastActivityUpdate(updated);
+      res.status(200).json({ ok: true });
+      return;
+    }
+  }
+
+  let status: ActivityStatus = 'completed';
+  if (hookEvent === 'PreToolUse') {
+    status = 'running';
+  } else if (hookEvent === 'PostToolUse') {
+    status = detectToolError(rawResult) ? 'error' : 'completed';
+  }
 
   const activity: Activity = {
     id: randomUUID(),
@@ -43,7 +89,11 @@ hooksRouter.post('/', (req, res) => {
     tool_input: toolInput,
     tool_result: toolResult,
     hook_event: hookEvent,
-    timestamp: Math.floor(Date.now() / 1000),
+    timestamp: Math.floor(nowMs / 1000),
+    status,
+    duration_ms: null,
+    timestamp_ms: nowMs,
+    tool_use_id: toolUseId,
   };
 
   insertActivity(activity);

@@ -3,6 +3,7 @@ import { useActivities } from '../hooks/useWebSocket';
 import { AgentList } from '../components/AgentList';
 import { ActivityFeed } from '../components/ActivityFeed';
 import { api } from '../lib/api';
+import { buildAgentColorMap } from '../lib/agentColors';
 import type { Agent } from '../types';
 import styles from './Dashboard.module.css';
 
@@ -24,6 +25,8 @@ export function Dashboard() {
     }
   }, [activities, agents]);
 
+  const colorMap = useMemo(() => buildAgentColorMap(agents), [agents]);
+
   const sessions = useMemo(
     () => Array.from(new Set(activities.map((a) => a.session_id))),
     [activities],
@@ -40,6 +43,7 @@ export function Dashboard() {
         agents={agents}
         activities={activities}
         selected={filter}
+        colorMap={colorMap}
         onSelect={(name) => setFilter((current) => (current === name ? null : name))}
       />
       <section className={styles.feedPane}>
@@ -63,7 +67,7 @@ export function Dashboard() {
             </span>
           </div>
         </div>
-        <ActivityFeed activities={visible} />
+        <ActivityFeed activities={visible} colorMap={colorMap} />
       </section>
     </div>
   );

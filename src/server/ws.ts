@@ -12,12 +12,19 @@ export function attachWebSocket(server: Server): void {
   });
 }
 
-export function broadcastActivity(activity: Activity): void {
+function broadcast(message: string): void {
   if (!wss) return;
-  const message = JSON.stringify({ type: 'activity', activity });
   for (const client of wss.clients) {
     if (client.readyState === WebSocket.OPEN) {
       client.send(message);
     }
   }
+}
+
+export function broadcastActivity(activity: Activity): void {
+  broadcast(JSON.stringify({ type: 'activity', activity }));
+}
+
+export function broadcastActivityUpdate(activity: Activity): void {
+  broadcast(JSON.stringify({ type: 'activity_update', activity }));
 }

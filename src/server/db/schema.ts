@@ -16,8 +16,19 @@ CREATE TABLE IF NOT EXISTS activities (
   tool_input  TEXT,
   tool_result TEXT,
   hook_event  TEXT NOT NULL,
-  timestamp   INTEGER NOT NULL
+  timestamp   INTEGER NOT NULL,
+  status      TEXT NOT NULL DEFAULT 'completed',
+  duration_ms INTEGER,
+  timestamp_ms INTEGER,
+  tool_use_id TEXT
 );
 
 CREATE INDEX IF NOT EXISTS idx_activities_timestamp ON activities(timestamp);
 `;
+
+export const activityColumnMigrations: Record<string, string> = {
+  status: `ALTER TABLE activities ADD COLUMN status TEXT NOT NULL DEFAULT 'completed'`,
+  duration_ms: `ALTER TABLE activities ADD COLUMN duration_ms INTEGER`,
+  timestamp_ms: `ALTER TABLE activities ADD COLUMN timestamp_ms INTEGER`,
+  tool_use_id: `ALTER TABLE activities ADD COLUMN tool_use_id TEXT`,
+};

@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Dashboard } from './pages/Dashboard';
 import { Agents } from './pages/Agents';
+import { Stats } from './pages/Stats';
 import { Setup } from './pages/Setup';
 import styles from './App.module.css';
 
-type View = 'dashboard' | 'agents' | 'setup';
+type View = 'dashboard' | 'agents' | 'stats' | 'setup';
 
 export function App() {
   const [view, setView] = useState<View>('dashboard');
@@ -27,6 +28,12 @@ export function App() {
             Agents
           </button>
           <button
+            className={view === 'stats' ? styles.activeTab : styles.tab}
+            onClick={() => setView('stats')}
+          >
+            Stats
+          </button>
+          <button
             className={view === 'setup' ? styles.activeTab : styles.tab}
             onClick={() => setView('setup')}
           >
@@ -37,6 +44,7 @@ export function App() {
       <main className={styles.main}>
         {view === 'dashboard' && <Dashboard />}
         {view === 'agents' && <Agents />}
+        {view === 'stats' && <Stats />}
         {view === 'setup' && <Setup />}
       </main>
     </div>

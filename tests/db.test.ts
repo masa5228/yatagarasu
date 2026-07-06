@@ -25,6 +25,10 @@ function makeActivity(over: Partial<Activity> = {}): Activity {
     tool_result: null,
     hook_event: 'PreToolUse',
     timestamp: Math.floor(Date.now() / 1000),
+    status: 'completed',
+    duration_ms: null,
+    timestamp_ms: Date.now(),
+    tool_use_id: null,
     ...over,
   };
 }

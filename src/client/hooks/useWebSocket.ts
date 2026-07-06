@@ -11,7 +11,12 @@ interface ActivityMessage {
   activity: Activity;
 }
 
-type ServerMessage = InitMessage | ActivityMessage;
+interface ActivityUpdateMessage {
+  type: 'activity_update';
+  activity: Activity;
+}
+
+type ServerMessage = InitMessage | ActivityMessage | ActivityUpdateMessage;
 
 export function useActivities(): { activities: Activity[]; connected: boolean } {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -38,6 +43,10 @@ export function useActivities(): { activities: Activity[]; connected: boolean } 
           setActivities(msg.activities);
         } else if (msg.type === 'activity') {
           setActivities((prev) => [...prev, msg.activity].slice(-100));
+        } else if (msg.type === 'activity_update') {
+          setActivities((prev) =>
+            prev.map((a) => (a.id === msg.activity.id ? msg.activity : a)),
+          );
         }
       };
     }
