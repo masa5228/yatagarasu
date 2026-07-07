@@ -1,8 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useActivities } from '../hooks/useWebSocket';
+import { useUsage } from '../hooks/useUsage';
+import { useDocumentPip } from '../hooks/useDocumentPip';
 import { AgentList } from '../components/AgentList';
 import { ActivityFeed } from '../components/ActivityFeed';
 import { UsageBar } from '../components/UsageBar';
+import { Widget } from '../components/Widget';
 import { api } from '../lib/api';
 import { buildAgentColorMap } from '../lib/agentColors';
 import type { Agent } from '../types';
@@ -10,6 +14,8 @@ import styles from './Dashboard.module.css';
 
 export function Dashboard() {
   const { activities, connected } = useActivities();
+  const usage = useUsage();
+  const pip = useDocumentPip();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [filter, setFilter] = useState<string | null>(null);
   const [session, setSession] = useState<string>('all');
@@ -40,7 +46,7 @@ export function Dashboard() {
 
   return (
     <div className={styles.page}>
-      <UsageBar />
+      <UsageBar snapshot={usage} />
       <div className={styles.dashboard}>
         <AgentList
           agents={agents}
@@ -53,6 +59,14 @@ export function Dashboard() {
         <div className={styles.feedHeader}>
           <span className={styles.feedTitle}>Activity Feed</span>
           <div className={styles.headerRight}>
+            {pip.supported && (
+              <button
+                className={styles.widgetButton}
+                onClick={() => (pip.pipWindow ? pip.close() : pip.open())}
+              >
+                {pip.pipWindow ? '⧉ Widget ✕' : '⧉ Widget'}
+              </button>
+            )}
             <select
               className={styles.sessionSelect}
               value={session}
@@ -73,6 +87,11 @@ export function Dashboard() {
           <ActivityFeed activities={visible} colorMap={colorMap} />
         </section>
       </div>
+      {pip.pipWindow &&
+        createPortal(
+          <Widget usage={usage} agents={agents} activities={activities} colorMap={colorMap} />,
+          pip.pipWindow.document.body,
+        )}
     </div>
   );
 }

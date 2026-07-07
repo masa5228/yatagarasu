@@ -50,6 +50,22 @@
   cursor: pointer;
 }
 
+.widgetButton {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-family: var(--sans);
+  cursor: pointer;
+}
+
+.widgetButton:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
 .live {
   color: var(--ok);
   font-size: 12px;

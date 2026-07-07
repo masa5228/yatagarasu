@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { agentColorStyle } from '../lib/agentColors';
+import { computeAgentStatus } from '../lib/agentStatus';
 import { summarize } from '../lib/summarize';
 import type { Agent, Activity } from '../types';
 import styles from './AgentList.module.css';
@@ -23,42 +24,33 @@ function useNow(intervalMs: number): number {
 
 export function AgentList({ agents, activities, selected, colorMap, onSelect }: Props) {
   const now = useNow(5000);
-
-  const latest = new Map<string, Activity>();
-  for (const activity of activities) {
-    const prev = latest.get(activity.agent_name);
-    if (!prev || activity.timestamp >= prev.timestamp) {
-      latest.set(activity.agent_name, activity);
-    }
-  }
+  const statuses = computeAgentStatus(agents, activities, Math.floor(now / 1000), colorMap);
 
   return (
     <aside className={styles.sidebar}>
       <div className={styles.heading}>AGENTS</div>
       <ul className={styles.list}>
-        {agents.map((agent) => {
-          const last = latest.get(agent.name);
-          const active = last != null && now / 1000 - last.timestamp < 60;
-          const isSelected = selected === agent.name;
-          const task = last ? `${last.tool_name}: ${summarize(last.tool_input)}` : '';
+        {statuses.map((s) => {
+          const isSelected = selected === s.name;
+          const task = s.last ? `${s.last.tool_name}: ${summarize(s.last.tool_input)}` : '';
           return (
             <li
-              key={agent.id}
+              key={s.id}
               className={`${styles.item} ${isSelected ? styles.selected : ''}`}
-              onClick={() => onSelect(agent.name)}
+              onClick={() => onSelect(s.name)}
             >
-              <span className={`${styles.status} ${active ? styles.active : styles.inactive}`}>
-                {active ? '⬤' : '○'}
+              <span className={`${styles.status} ${s.active ? styles.active : styles.inactive}`}>
+                {s.active ? '⬤' : '○'}
               </span>
               <span className={styles.meta}>
                 <span className={styles.nameRow}>
-                  <span className={styles.name} style={agentColorStyle(colorMap.get(agent.name))}>
-                    {agent.name}
+                  <span className={styles.name} style={agentColorStyle(s.color)}>
+                    {s.name}
                   </span>
-                  {last?.status === 'error' && <span className={styles.errorBadge}>⚠</span>}
-                  {last?.status === 'running' && <span className={styles.runningBadge}>◌</span>}
+                  {s.last?.status === 'error' && <span className={styles.errorBadge}>⚠</span>}
+                  {s.last?.status === 'running' && <span className={styles.runningBadge}>◌</span>}
                 </span>
-                <span className={styles.role}>{agent.role}</span>
+                <span className={styles.role}>{s.role}</span>
                 {task && (
                   <span className={styles.task} title={task}>
                     {task}

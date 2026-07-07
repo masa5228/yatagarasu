@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
-import { api } from '../lib/api';
+import { countdown, usageSeverity, type Severity } from '../lib/usage';
 import type { ProviderUsage, RateWindow, UsageSnapshot } from '../types';
 import styles from './UsageBar.module.css';
 
-const REFRESH_MS = 45000;
 const TICK_MS = 30000;
 
 const PROVIDER_LABEL: Record<ProviderUsage['provider'], string> = {
@@ -11,23 +10,11 @@ const PROVIDER_LABEL: Record<ProviderUsage['provider'], string> = {
   codex: 'Codex',
 };
 
-function severityClass(percent: number): string {
-  if (percent > 90) return styles.fillErr;
-  if (percent >= 70) return styles.fillWarn;
-  return styles.fillOk;
-}
-
-function countdown(resetsAt: number | null, nowSec: number): string {
-  if (!resetsAt) return '';
-  const remaining = resetsAt - nowSec;
-  if (remaining <= 0) return '↺ now';
-  const d = Math.floor(remaining / 86400);
-  const h = Math.floor((remaining % 86400) / 3600);
-  const m = Math.floor((remaining % 3600) / 60);
-  if (d > 0) return `↺ ${d}d${h}h`;
-  if (h > 0) return `↺ ${h}h${m}m`;
-  return `↺ ${m}m`;
-}
+const FILL_CLASS: Record<Severity, string> = {
+  ok: styles.fillOk,
+  warn: styles.fillWarn,
+  err: styles.fillErr,
+};
 
 function Window({ window: w, nowSec }: { window: RateWindow; nowSec: number }) {
   const pct = Math.min(100, Math.max(0, w.usedPercent));
@@ -35,7 +22,7 @@ function Window({ window: w, nowSec }: { window: RateWindow; nowSec: number }) {
     <div className={styles.window}>
       <span className={styles.windowLabel}>{w.label}</span>
       <span className={styles.track}>
-        <span className={`${styles.fill} ${severityClass(pct)}`} style={{ width: `${pct}%` }} />
+        <span className={`${styles.fill} ${FILL_CLASS[usageSeverity(pct)]}`} style={{ width: `${pct}%` }} />
       </span>
       <span className={styles.percent}>{pct}%</span>
       <span className={styles.reset}>{countdown(w.resetsAt, nowSec)}</span>
@@ -67,28 +54,12 @@ function ProviderRow({ usage, nowSec }: { usage: ProviderUsage; nowSec: number }
   );
 }
 
-export function UsageBar() {
-  const [snapshot, setSnapshot] = useState<UsageSnapshot | null>(null);
+export function UsageBar({ snapshot }: { snapshot: UsageSnapshot | null }) {
   const [nowSec, setNowSec] = useState(() => Math.floor(Date.now() / 1000));
 
   useEffect(() => {
-    let cancelled = false;
-    function load() {
-      api
-        .getUsage()
-        .then((data) => {
-          if (!cancelled) setSnapshot(data);
-        })
-        .catch(() => {});
-    }
-    load();
-    const fetchId = window.setInterval(load, REFRESH_MS);
-    const tickId = window.setInterval(() => setNowSec(Math.floor(Date.now() / 1000)), TICK_MS);
-    return () => {
-      cancelled = true;
-      window.clearInterval(fetchId);
-      window.clearInterval(tickId);
-    };
+    const id = window.setInterval(() => setNowSec(Math.floor(Date.now() / 1000)), TICK_MS);
+    return () => window.clearInterval(id);
   }, []);
 
   if (!snapshot) return null;
